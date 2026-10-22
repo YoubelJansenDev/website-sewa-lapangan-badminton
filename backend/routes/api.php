@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CourtController;
+use App\Http\Controllers\EquipmentController;
 
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:10,1');
@@ -14,6 +17,16 @@ Route::prefix('auth')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::post('logout', [AuthController::class, 'logout']);
     });
+});
+// Endpoint member (wajib login)
+Route::middleware('auth:api')->group(function () {
+    Route::get('courts', [CourtController::class, 'index']);
+    Route::get('courts/{court}/availability', [CourtController::class, 'availability']);
+    Route::get('equipment', [EquipmentController::class, 'index']);
+
+    Route::get('bookings', [BookingController::class, 'index']);
+    Route::post('bookings', [BookingController::class, 'store'])->middleware('throttle:20,1');
+    Route::get('bookings/{booking}', [BookingController::class, 'show']);
 });
 
 // Semua endpoint admin wajib login DAN role admin
