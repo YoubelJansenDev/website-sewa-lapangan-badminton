@@ -6,7 +6,9 @@ use App\Models\Booking;
 use App\Models\BookingSlot;
 use App\Models\Court;
 use App\Models\Equipment;
+use App\Models\Invoice;
 use App\Models\User;
+use App\Models\UserNotification;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -134,6 +136,86 @@ class BookingService
 
             throw $e;
         }
+    }
+
+    /** Admin menyetujui booking: invoice terbit dan member dinotifikasi. */
+    public function approve(Booking $booking, User $admin): Booking
+    {
+        return DB::transaction(function () use ($booking, $admin) {
+            $locked = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
+
+            if ($locked->status !== 'pending') {
+                abort(409, 'Booking ini sudah diproses sebelumnya.');
+            }
+
+            $locked->update([
+                'status' => 'approved',
+                'verified_by' => $admin->id,
+                'verified_at' => now(),
+            ]);
+
+            $invoice = Invoice::create([
+                'booking_id' => $locked->id,
+                'invoice_number' => sprintf('INV-%s-%05d', now()->format('Ymd'), $locked->id),
+                'amount' => $locked->total_price,
+                'status' => 'unpaid',
+                'method' => 'simulasi',
+            ]);
+
+            $locked->load('court:id,name');
+
+            $this->notify(
+                $locked->user_id,
+                'Booking disetujui',
+                "Booking {$locked->court->name} tanggal {$locked->booking_date->format('d-m-Y')} "
+                .'pukul '.substr($locked->start_time, 0, 5)." ({$locked->duration_hours} jam) disetujui. "
+                ."Silakan selesaikan pembayaran untuk invoice {$invoice->invoice_number}."
+            );
+
+            return $locked->load(['user:id,name,email', 'items.equipment:id,name', 'invoice']);
+        });
+    }
+
+    /** Admin menolak booking: jam dilepas dan member dinotifikasi beserta alasannya. */
+    public function reject(Booking $booking, User $admin, string $reason): Booking
+    {
+        return DB::transaction(function () use ($booking, $admin, $reason) {
+            $locked = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
+
+            if ($locked->status !== 'pending') {
+                abort(409, 'Booking ini sudah diproses sebelumnya.');
+            }
+
+            $locked->update([
+                'status' => 'rejected',
+                'rejection_reason' => $reason,
+                'verified_by' => $admin->id,
+                'verified_at' => now(),
+            ]);
+
+            // Melepas jam agar bisa dipesan orang lain
+            BookingSlot::where('booking_id', $locked->id)->delete();
+
+            $locked->load('court:id,name');
+
+            $this->notify(
+                $locked->user_id,
+                'Booking ditolak',
+                "Booking {$locked->court->name} tanggal {$locked->booking_date->format('d-m-Y')} "
+                .'pukul '.substr($locked->start_time, 0, 5)." ditolak. Alasan: {$reason}"
+            );
+
+            return $locked->load(['user:id,name,email', 'items.equipment:id,name']);
+        });
+    }
+
+    public function notify(int $userId, string $title, string $message): void
+    {
+        UserNotification::create([
+            'user_id' => $userId,
+            'title' => $title,
+            'message' => $message,
+        ]);
     }
 
     /** Jumlah alat yang sudah terpakai booking aktif di jam yang beririsan. */

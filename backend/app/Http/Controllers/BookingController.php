@@ -10,13 +10,19 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
+    private const RELATIONS = [
+        'court:id,name,floor_type',
+        'items.equipment:id,name',
+        'invoice:id,booking_id,invoice_number,status,amount',
+    ];
+
     public function __construct(private BookingService $service)
     {
     }
 
     public function index(Request $request): JsonResponse
     {
-        $bookings = Booking::with(['court:id,name,floor_type', 'items.equipment:id,name'])
+        $bookings = Booking::with(self::RELATIONS)
             ->where('user_id', $request->user()->id)
             ->latest()
             ->paginate(10);
@@ -29,9 +35,7 @@ class BookingController extends Controller
         // 404 (bukan 403) agar orang lain tidak bisa menebak ID booking yang ada
         abort_unless($booking->user_id === $request->user()->id, 404);
 
-        return response()->json([
-            'booking' => $booking->load(['court:id,name,floor_type', 'items.equipment:id,name']),
-        ]);
+        return response()->json(['booking' => $booking->load(self::RELATIONS)]);
     }
 
     public function store(StoreBookingRequest $request): JsonResponse
