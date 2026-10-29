@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\CourtEquipmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CourtController;
@@ -49,4 +50,14 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function (
     Route::get('bookings/{booking}', [AdminBookingController::class, 'show']);
     Route::post('bookings/{booking}/approve', [AdminBookingController::class, 'approve']);
     Route::post('bookings/{booking}/reject', [AdminBookingController::class, 'reject']);
+
+    // CRUD lapangan & alat sewa (tambahan baru — tidak mengubah route di atas)
+    Route::get('courts', [CourtEquipmentController::class, 'courtIndex']);
+    Route::post('courts', [CourtEquipmentController::class, 'courtStore']);
+    Route::put('courts/{court}', [CourtEquipmentController::class, 'courtUpdate']);
+    Route::delete('courts/{court}', [CourtEquipmentController::class, 'courtDestroy']);
+    Route::get('equipment', [CourtEquipmentController::class, 'equipmentIndex']);
+    Route::post('equipment', [CourtEquipmentController::class, 'equipmentStore']);
+    Route::put('equipment/{equipment}', [CourtEquipmentController::class, 'equipmentUpdate']);
+    Route::delete('equipment/{equipment}', [CourtEquipmentController::class, 'equipmentDestroy']);
 });
