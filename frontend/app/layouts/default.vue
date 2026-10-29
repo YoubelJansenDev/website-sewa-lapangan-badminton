@@ -22,6 +22,7 @@ async function handleLogout() {
           <template v-if="auth.isLoggedIn.value">
             <NuxtLink to="/booking" class="rounded-lg px-3 py-2 text-sm font-medium hover:bg-gray-100">Booking</NuxtLink>
             <NuxtLink to="/riwayat" class="rounded-lg px-3 py-2 text-sm font-medium hover:bg-gray-100">Riwayat</NuxtLink>
+            <NuxtLink to="/notifikasi" class="rounded-lg px-3 py-2 text-sm font-medium hover:bg-gray-100">Notifikasi</NuxtLink>
             <NuxtLink
               v-if="auth.isAdmin.value"
               to="/admin"
