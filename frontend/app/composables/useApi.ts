@@ -31,5 +31,9 @@ export function useApi() {
       request<T>(path, { params }),
     post: <T>(path: string, body?: Record<string, unknown>) =>
       request<T>(path, { method: 'POST', body }),
+    put: <T>(path: string, body?: Record<string, unknown>) =>
+      request<T>(path, { method: 'PUT', body }),
+    delete: <T>(path: string, body?: Record<string, unknown>) =>
+      request<T>(path, { method: 'DELETE', body }),
   }
 }

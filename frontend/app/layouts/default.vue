@@ -28,6 +28,11 @@ async function handleLogout() {
               to="/admin"
               class="rounded-lg px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50"
             >Admin</NuxtLink>
+            <NuxtLink
+              v-if="auth.isAdmin.value"
+              to="/admin/kelola"
+              class="rounded-lg px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50"
+            >Kelola</NuxtLink>
             <button
               type="button"
               class="ml-2 rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
