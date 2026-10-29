@@ -66,10 +66,16 @@ onMounted(() => load())
         <h1 class="text-2xl font-extrabold tracking-tight">Riwayat Booking</h1>
         <p class="mt-1 text-sm text-gray-500">Semua booking Anda, terbaru duluan.</p>
       </div>
-      <NuxtLink
-        to="/booking"
-        class="rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700"
-      >+ Booking Baru</NuxtLink>
+      <div class="flex gap-2">
+        <NuxtLink
+          to="/riwayat/tagihan"
+          class="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:border-green-400 hover:bg-green-50"
+        >Tagihan Saya</NuxtLink>
+        <NuxtLink
+          to="/booking"
+          class="rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700"
+        >+ Booking Baru</NuxtLink>
+      </div>
     </div>
 
     <p v-if="errorMsg" class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ errorMsg }}</p>
