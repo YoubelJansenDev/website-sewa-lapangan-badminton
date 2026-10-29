@@ -24,7 +24,8 @@ export function parseApiError(error: unknown): string {
   // 422: error validasi Laravel { message, errors } -> ambil pesan field pertama
   if (status === 422 && data?.errors) {
     const firstField = Object.values(data.errors)[0]
-    if (firstField && firstField.length > 0) return firstField[0]
+    const firstMsg = firstField?.[0]
+    if (firstMsg) return firstMsg
   }
 
   switch (status) {

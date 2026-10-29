@@ -13,7 +13,7 @@ export function formatRupiah(value: number): string {
 
 /** "2026-01-31" -> "Sabtu, 31 Januari 2026" (tanpa dependency dayjs). */
 export function formatDateIndo(dateStr: string): string {
-  const [y, m, d] = dateStr.split('-').map(Number)
+  const [y = 0, m = 1, d = 1] = dateStr.split('-').map(Number)
   const dt = new Date(y, m - 1, d)
   return `${HARI[dt.getDay()]}, ${d} ${BULAN[m - 1]} ${y}`
 }

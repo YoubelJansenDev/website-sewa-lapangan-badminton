@@ -78,7 +78,7 @@ async function loadCourts() {
     const res = await api.get<{ courts: Court[] }>('/courts')
     courts.value = res.courts
     if (courtId.value === null && courts.value.length > 0) {
-      courtId.value = courts.value[0].id
+      courtId.value = courts.value[0]!.id
     }
   } catch (e: unknown) {
     formError.value = parseApiError(e)
