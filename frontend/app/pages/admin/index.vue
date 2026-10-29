@@ -123,7 +123,7 @@ onMounted(() => load())
 </script>
 
 <template>
-  <div>
+  <div class="page-enter">
     <div class="mb-6">
       <h1 class="text-2xl font-extrabold tracking-tight">Panel Admin — Verifikasi Booking</h1>
       <p class="mt-1 text-sm text-gray-500">Setujui atau tolak booking member. Menyetujui akan membuat invoice.</p>
@@ -153,7 +153,7 @@ onMounted(() => load())
     </div>
 
     <div v-else class="space-y-3">
-      <div v-for="b in bookings" :key="b.id" class="rounded-2xl border border-gray-200 p-5">
+      <div v-for="b in bookings" :key="b.id" class="card-hover rounded-2xl border border-gray-200 bg-white p-5">
         <div class="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p class="font-bold">#{{ b.id }} · {{ b.court?.name ?? '—' }}</p>

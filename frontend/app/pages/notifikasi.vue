@@ -63,7 +63,7 @@ onMounted(() => load())
 </script>
 
 <template>
-  <div class="mx-auto max-w-3xl">
+  <div class="page-enter mx-auto max-w-3xl">
     <div class="mb-6 flex items-center justify-between gap-2">
       <div>
         <h1 class="text-2xl font-extrabold tracking-tight">Notifikasi</h1>

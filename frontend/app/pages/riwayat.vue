@@ -60,7 +60,7 @@ onMounted(() => load())
 </script>
 
 <template>
-  <div>
+  <div class="page-enter">
     <div class="mb-6 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-extrabold tracking-tight">Riwayat Booking</h1>
@@ -84,7 +84,7 @@ onMounted(() => load())
         v-for="b in bookings"
         :key="b.id"
         :to="`/riwayat/${b.id}`"
-        class="block rounded-2xl border border-gray-200 p-5 transition hover:border-green-400"
+        class="card-hover block rounded-2xl border border-gray-200 bg-white p-5 hover:border-green-400"
       >
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>

@@ -99,7 +99,7 @@ onMounted(() => load())
     <div v-if="loading" class="rounded-2xl border border-gray-200 p-10 text-center text-sm text-gray-500">Memuat…</div>
 
     <template v-else-if="booking">
-      <div class="rounded-2xl border border-gray-200 p-6">
+      <div class="page-enter rounded-2xl border border-gray-200 bg-white p-6">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h1 class="text-xl font-extrabold tracking-tight">{{ booking.court?.name ?? 'Lapangan' }}</h1>
           <span :class="['rounded-full px-3 py-1 text-xs font-bold', statusInfo(booking.status).class]">
@@ -150,7 +150,7 @@ onMounted(() => load())
       </div>
 
       <!-- Invoice -->
-      <div v-if="booking.invoice" class="mt-6 rounded-2xl border border-gray-200 p-6">
+      <div v-if="booking.invoice" class="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h2 class="font-bold">Invoice {{ booking.invoice.invoice_number }}</h2>
           <span
