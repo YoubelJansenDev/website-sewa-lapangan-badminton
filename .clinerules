@@ -1,0 +1,46 @@
+# SmashArena - Aturan Proyek (baca sebelum mengubah kode apa pun)
+
+## Ringkasan
+Website booking lapangan badminton. Monorepo:
+- backend/   : Laravel 10 (API)
+- frontend/  : Nuxt 4 + Tailwind v4 (SPA)
+- database/  : schema.sql (ekspor struktur MySQL)
+- docs/      : ERD.md, PLAN.md, dokumentasi lain
+Baca docs/PLAN.md untuk status, kontrak API, dan rencana kerja.
+
+## Lingkungan
+- Windows + Laragon. PHP 8.1.10, MySQL (database: badminton_booking), Node 22.
+- Gunakan sintaks PowerShell/CMD, BUKAN bash.
+- Backend: php artisan serve --host=localhost --port=8000
+- Frontend: npm run dev (http://localhost:3000). Selalu pakai "localhost", bukan 127.0.0.1.
+
+## Stack dan versi (jangan upgrade tanpa izin)
+- Backend: Laravel 10.50, PHP 8.1. JANGAN memakai fitur PHP 8.2+ atau Laravel 11+ (tidak ada bootstrap/app.php untuk middleware; pakai app/Http/Kernel.php).
+- Auth: JWT (php-open-source-saver/jwt-auth 2.7), guard "api", disimpan di cookie httpOnly bernama "token".
+  Middleware JwtFromCookie memindahkan cookie ke header Authorization. Refresh lewat POST /api/auth/refresh.
+- Role: users.role = 'user' | 'admin'. Middleware alias "role:admin". Akun admin dibuat lewat AdminSeeder dari .env.
+- Frontend: Nuxt 4 (kode di frontend/app/), Vue 3 <script setup lang="ts">, Tailwind v4 via @tailwindcss/vite, mode SPA (ssr: false).
+
+## Aturan wajib
+1. Seluruh pemanggilan API frontend lewat SATU fungsi: useApi() di app/composables/useApi.ts. Base URL hanya dari runtimeConfig.public.apiBase (env NUXT_PUBLIC_API_BASE). Dilarang menulis "localhost:8000" di tempat lain.
+2. JWT TIDAK BOLEH disimpan di localStorage/sessionStorage atau dibaca JavaScript. Hanya cookie httpOnly.
+3. Keamanan ada di backend. Middleware/route guard di frontend hanya untuk UX. Semua endpoint admin berada di /api/admin/* dengan middleware ['auth:api','role:admin'].
+4. Harga dan total SELALU dihitung di backend. Jangan percaya angka dari frontend.
+5. Anti double booking: unique index booking_slots(court_id, booking_date, slot_hour) + DB::transaction. Jangan menghapus atau melemahkan ini.
+6. Jangan akses data milik user lain: gunakan 404 (bukan 403) untuk booking/invoice/notifikasi milik orang lain.
+7. Jangan commit .env, kunci, atau password. Hanya .env.example (tanpa nilai rahasia). Periksa git status sebelum commit.
+8. Perubahan struktur database HANYA lewat migration baru. DILARANG menjalankan migrate:fresh, migrate:reset, atau menghapus data tanpa izin eksplisit.
+9. Semua respons API berbentuk JSON dengan field "message" untuk pesan; error validasi memakai format Laravel 422 {message, errors}.
+10. Teks antarmuka dan pesan error untuk pengguna dalam Bahasa Indonesia.
+11. Setiap fitur baru: tambahkan atau perbarui test (Laravel feature test) dan jalankan sebelum menyatakan selesai.
+12. Commit kecil per fitur dengan format: feat(scope): ..., fix(scope): ..., docs: ..., test: ...
+13. Kerjakan satu fase per tugas. Jangan menyentuh file di luar cakupan fase. Jelaskan rencana sebelum mengubah banyak file.
+
+## Desain
+Modern minimalis, warna putih, hijau, dan hitam; gradasi halus (putih ke hijau muda); tidak kaku.
+Font Plus Jakarta Sans. Aksen utama green-600. Tombol utama hitam atau hijau, sudut membulat penuh (rounded-full) untuk tombol, rounded-2xl untuk kartu.
+Gunakan utilitas Tailwind v4 (misalnya bg-linear-to-br, bukan bg-gradient-to-br).
+
+## Akun uji (hanya development)
+- Admin: lihat ADMIN_EMAIL dan ADMIN_PASSWORD di backend/.env
+- User: budi@test.com dan sari@test.com, password: password123
